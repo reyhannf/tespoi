@@ -1,21 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>XSS Test</title>
+  <title>Simulasi XSS</title>
 </head>
 <body>
-  <h2>Tinggalkan Pesan:</h2>
-  <form method="GET">
-    <input type="text" name="pesan" placeholder="Tulis pesan di sini">
+  <h2>Tinggalkan Pesan</h2>
+  <form id="pesanForm">
+    <input type="text" id="pesan" placeholder="Masukkan pesan">
     <button type="submit">Kirim</button>
   </form>
 
-  <h3>Hasil:</h3>
-  <div id="hasil"></div>
+  <h3>Pesan:</h3>
+  <div id="tampilPesan"></div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById("hasil").innerHTML = params.get("pesan");
+    const form = document.getElementById('pesanForm');
+    const tampil = document.getElementById('tampilPesan');
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const pesan = document.getElementById('pesan').value;
+      localStorage.setItem("pesan", pesan);
+      tampil.innerHTML = pesan;
+    };
+
+    // menampilkan pesan yang sebelumnya dikirim
+    const tersimpan = localStorage.getItem("pesan");
+    if (tersimpan) tampil.innerHTML = tersimpan;
   </script>
 </body>
 </html>
