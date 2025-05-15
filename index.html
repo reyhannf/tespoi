@@ -1,0 +1,12 @@
+<html>
+<head><title>XSS Test</title></head>
+<body>
+  <h2>Tinggalkan Pesan:</h2>
+  <div id="hasil"></div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById("hasil").innerHTML = params.get("pesan");
+  </script>
+</body>
+</html>
