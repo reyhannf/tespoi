@@ -12,7 +12,7 @@
       overflow-x: hidden;
     }
 
-    /* ANIMASI TULISAN KETURUNAN */
+    /* Intro animasi */
     .intro {
       display: flex;
       justify-content: center;
@@ -29,88 +29,74 @@
       to { opacity: 1; }
     }
 
-    /* KONTAINER POHON */
     .tree-container {
       display: none;
       text-align: center;
-      padding: 40px 20px;
+      padding: 40px 10px;
+    }
+
+    /* Bagan keluarga */
+    .tree {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
 
     .tree ul {
-      padding-top: 20px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
       position: relative;
-      display: inline-block;
+      display: flex;
+      justify-content: center;
     }
 
     .tree li {
-      float: left;
-      text-align: center;
-      list-style-type: none;
       position: relative;
-      padding: 20px 5px 0 5px;
-      transition: all 0.5s;
+      margin: 20px 10px;
+      text-align: center;
     }
 
-    .tree li::before, .tree li::after {
+    .tree li::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      width: 2px;
+      height: 20px;
+      background: #654321;
+      transform: translateX(-50%);
+    }
+
+    .tree ul::before {
       content: '';
       position: absolute;
       top: 0;
-      right: 50%;
-      border-top: 2px solid #654321;
-      width: 50%;
-      height: 20px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #654321;
     }
 
-    .tree li::after {
-      right: auto;
-      left: 50%;
-      border-left: 2px solid #654321;
-    }
-
-    .tree li:only-child::before,
-    .tree li:only-child::after {
+    .tree ul:only-child::before,
+    .tree li:only-child::before {
       display: none;
     }
 
-    .tree li:only-child { padding-top: 0; }
-
-    .tree li:first-child::before,
-    .tree li:last-child::after {
-      border: 0 none;
-    }
-
-    .tree li:last-child::before {
-      border-right: 2px solid #654321;
-      border-radius: 0 5px 0 0;
-    }
-
-    .tree li:first-child::after {
-      border-radius: 5px 0 0 0;
-    }
-
-    .tree ul ul::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      border-left: 2px solid #654321;
-      width: 0;
-      height: 20px;
-    }
-
-    .tree li div {
-      border: 2px solid #654321;
+    .node {
       display: inline-block;
       padding: 10px 20px;
-      border-radius: 10px;
       background: #fff7e6;
-      position: relative;
-      font-weight: 500;
+      border: 2px solid #654321;
+      border-radius: 10px;
       cursor: pointer;
       transition: 0.3s;
+      font-weight: 500;
+      color: #4b2e05;
     }
 
-    .tree li div:hover {
+    .node:hover {
       background: #ffe9b3;
       transform: scale(1.05);
     }
@@ -122,7 +108,7 @@
       color: #5e4520;
     }
 
-    /* POPUP BOX */
+    /* Popup */
     .popup {
       display: none;
       position: fixed;
@@ -173,7 +159,6 @@
     .close-btn:hover {
       background: #6d4308;
     }
-
   </style>
 </head>
 <body>
@@ -184,19 +169,19 @@
     <div class="tree">
       <ul>
         <li>
-          <div data-name="Paaki">Paaki</div>
+          <div class="node" data-name="Paaki">Paaki</div>
           <ul>
             <li>
-              <div data-name="Umi">Umi</div>
+              <div class="node" data-name="Umi">Umi</div>
               <ul>
-                <li><div data-name="Agung">Agung</div></li>
+                <li><div class="node" data-name="Agung">Agung</div></li>
               </ul>
             </li>
             <li>
-              <div data-name="Aep">Aep</div>
+              <div class="node" data-name="Aep">Aep</div>
               <ul>
-                <li><div data-name="Nao">Nao</div></li>
-                <li><div data-name="Rey">Rey</div></li>
+                <li><div class="node" data-name="Nao">Nao</div></li>
+                <li><div class="node" data-name="Rey">Rey</div></li>
               </ul>
             </li>
           </ul>
@@ -216,7 +201,6 @@
   </div>
 
   <script>
-    // Data deskripsi tiap orang
     const data = {
       "Paaki": "Seorang kakek mantan RW daerah Gang Kelinci, sosoknya sangat mulia.",
       "Umi": "Wanita lahir dari Paaki dan Enin.",
@@ -226,18 +210,16 @@
       "Rey": "Orang sigma 😎."
     };
 
-    // Setelah animasi intro
     setTimeout(() => {
       document.querySelector('.intro').style.display = 'none';
       document.querySelector('.tree-container').style.display = 'block';
     }, 2500);
 
-    // Popup handler
     const popup = document.getElementById('popup');
     const popupName = document.getElementById('popup-name');
     const popupDesc = document.getElementById('popup-desc');
 
-    document.querySelectorAll('.tree div[data-name]').forEach(node => {
+    document.querySelectorAll('.node').forEach(node => {
       node.addEventListener('click', () => {
         const name = node.getAttribute('data-name');
         popupName.textContent = name;
@@ -250,7 +232,6 @@
       popup.style.display = 'none';
     }
 
-    // Tutup popup kalau klik di luar kotak
     popup.addEventListener('click', e => {
       if (e.target === popup) closePopup();
     });
