@@ -1,32 +1,260 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Simulasi XSS</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pohon Keluarga - Keturunan</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at center, #fdf6e3, #e0c9a6);
+      overflow-x: hidden;
+    }
+
+    /* ANIMASI TULISAN KETURUNAN */
+    .intro {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-size: 3rem;
+      color: #4b2e05;
+      font-weight: bold;
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    /* KONTAINER POHON */
+    .tree-container {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .tree ul {
+      padding-top: 20px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .tree li {
+      float: left;
+      text-align: center;
+      list-style-type: none;
+      position: relative;
+      padding: 20px 5px 0 5px;
+      transition: all 0.5s;
+    }
+
+    .tree li::before, .tree li::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 50%;
+      border-top: 2px solid #654321;
+      width: 50%;
+      height: 20px;
+    }
+
+    .tree li::after {
+      right: auto;
+      left: 50%;
+      border-left: 2px solid #654321;
+    }
+
+    .tree li:only-child::before,
+    .tree li:only-child::after {
+      display: none;
+    }
+
+    .tree li:only-child { padding-top: 0; }
+
+    .tree li:first-child::before,
+    .tree li:last-child::after {
+      border: 0 none;
+    }
+
+    .tree li:last-child::before {
+      border-right: 2px solid #654321;
+      border-radius: 0 5px 0 0;
+    }
+
+    .tree li:first-child::after {
+      border-radius: 5px 0 0 0;
+    }
+
+    .tree ul ul::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      border-left: 2px solid #654321;
+      width: 0;
+      height: 20px;
+    }
+
+    .tree li div {
+      border: 2px solid #654321;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: #fff7e6;
+      position: relative;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .tree li div:hover {
+      background: #ffe9b3;
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9rem;
+      color: #5e4520;
+    }
+
+    /* POPUP BOX */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .popup-content {
+      background: #fff7e6;
+      border-radius: 15px;
+      padding: 25px;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      text-align: center;
+      animation: zoomIn 0.3s ease;
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-content h2 {
+      margin-top: 0;
+      color: #4b2e05;
+    }
+
+    .popup-content p {
+      color: #3a2a09;
+      font-size: 1rem;
+    }
+
+    .close-btn {
+      background: #4b2e05;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .close-btn:hover {
+      background: #6d4308;
+    }
+
+  </style>
 </head>
 <body>
-  <h2>Tinggalkan Pesan</h2>
-  <form id="pesanForm">
-    <input type="text" id="pesan" placeholder="Masukkan pesan">
-    <button type="submit">Kirim</button>
-  </form>
 
-  <h3>Pesan:</h3>
-  <div id="tampilPesan"></div>
+  <div class="intro">Keturunan</div>
+
+  <div class="tree-container">
+    <div class="tree">
+      <ul>
+        <li>
+          <div data-name="Paaki">Paaki</div>
+          <ul>
+            <li>
+              <div data-name="Umi">Umi</div>
+              <ul>
+                <li><div data-name="Agung">Agung</div></li>
+              </ul>
+            </li>
+            <li>
+              <div data-name="Aep">Aep</div>
+              <ul>
+                <li><div data-name="Nao">Nao</div></li>
+                <li><div data-name="Rey">Rey</div></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <footer>© 2025 Keluarga Paaki</footer>
+  </div>
+
+  <!-- POPUP -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h2 id="popup-name"></h2>
+      <p id="popup-desc"></p>
+      <button class="close-btn" onclick="closePopup()">Tutup</button>
+    </div>
+  </div>
 
   <script>
-    const form = document.getElementById('pesanForm');
-    const tampil = document.getElementById('tampilPesan');
-
-    form.onsubmit = (e) => {
-      e.preventDefault();
-      const pesan = document.getElementById('pesan').value;
-      localStorage.setItem("pesan", pesan);
-      tampil.innerHTML = pesan;
+    // Data deskripsi tiap orang
+    const data = {
+      "Paaki": "Seorang kakek mantan RW daerah Gang Kelinci, sosoknya sangat mulia.",
+      "Umi": "Wanita lahir dari Paaki dan Enin.",
+      "Agung": "Putra dari Umi.",
+      "Aep": "Laki-laki, abang dari Umi.",
+      "Nao": "Anak dari Aep.",
+      "Rey": "Orang sigma 😎."
     };
 
-    // menampilkan pesan yang sebelumnya dikirim
-    const tersimpan = localStorage.getItem("pesan");
-    if (tersimpan) tampil.innerHTML = tersimpan;
+    // Setelah animasi intro
+    setTimeout(() => {
+      document.querySelector('.intro').style.display = 'none';
+      document.querySelector('.tree-container').style.display = 'block';
+    }, 2500);
+
+    // Popup handler
+    const popup = document.getElementById('popup');
+    const popupName = document.getElementById('popup-name');
+    const popupDesc = document.getElementById('popup-desc');
+
+    document.querySelectorAll('.tree div[data-name]').forEach(node => {
+      node.addEventListener('click', () => {
+        const name = node.getAttribute('data-name');
+        popupName.textContent = name;
+        popupDesc.textContent = data[name] || "Belum ada deskripsi.";
+        popup.style.display = 'flex';
+      });
+    });
+
+    function closePopup() {
+      popup.style.display = 'none';
+    }
+
+    // Tutup popup kalau klik di luar kotak
+    popup.addEventListener('click', e => {
+      if (e.target === popup) closePopup();
+    });
   </script>
+
 </body>
 </html>
